@@ -1,0 +1,51 @@
+{
+    "101": {
+        "latitude": 41.1786134,
+        "longitude": -73.210893,
+        "address": "427 Wood Ave, Bridgeport, CT 06605",
+        "city": "Bridgeport",
+        "state": "Connecticut",
+        "country": "United States"
+    },
+    "102": {
+        "latitude": 12.7787501,
+        "longitude": 77.6303061,
+        "address": "Plot 10/13, Phase II Jigani Industrial Area, Jigani, Bengaluru, Karnataka 560105, India",
+        "city": "Jigani",
+        "state": "Karnataka",
+        "country": "India"
+    },
+    "103": {
+        "latitude": 45.7512688,
+        "longitude": 4.9146744,
+        "address": "56 Rue Séverine, 69100 Villeurbanne, France",
+        "city": "Villeurbanne",
+        "state": "Île-de-France",
+        "country": "France"
+    },
+    "104": {
+        "latitude": 53.481291,
+        "longitude": -2.2403059,
+        "address": "22 Fountain St, Manchester, UK",
+        "city": "Manchester",
+        "state": "Manchester",
+        "country": "UK"
+    },
+    "105": {
+        "latitude": 53.5249714,
+        "longitude": -113.4490666,
+        "address": "8909 79 St NW, Edmonton, AB T6C 2P8, Canada",
+        "city": "Edmonton",
+        "state": "Alberta",
+        "country": "Canada"
+    },
+    "106": {
+        "latitude": 41.6609468,
+        "longitude": -0.799453,
+        "address": "20 C. E, Zaragoza, Aragon, Spain",
+        "city": "Zaragoza",
+        "state": "Aragon",
+        "country": "Spain"
+    }
+}
+
