@@ -1,11 +1,11 @@
 {
     "101": {
-        "latitude": 41.1786134,
-        "longitude": -73.210893,
-        "address": "427 Wood Ave, Bridgeport, CT 06605",
-        "city": "Bridgeport",
-        "state": "Connecticut",
-        "country": "United States"
+        "latitude": 17.1307841,
+        "longitude": 102.9571008,
+        "address": "Phan Don, Kumphawapi District, Udon Thani, Thailand",
+        "city": "Udon Thani",
+        "state": "Kumphawapi",
+        "country": "Thailand"
     },
     "102": {
         "latitude": 12.7787501,
@@ -46,6 +46,118 @@
         "city": "Zaragoza",
         "state": "Aragon",
         "country": "Spain"
+    },
+    "107": {
+        "latitude": 48.2491641,
+        "longitude": 14.2681338,
+        "address": "Salzburger Str. 302, 4060 Leonding, Austria",
+        "city": "Leonding",
+        "state": "Salzburg",
+        "country": "Austria"
+    },
+    "108": {
+        "latitude": 37.0908232,
+        "longitude": 27.25485,
+        "address": "Geriş, Çoban Cd. No:12, 48990 Bodrum/Muğla, Trkiye",
+        "city": "Bodrum",
+        "state": "Muğla",
+        "country": "Trkiye"
+    },
+    "109": {
+        "latitude": -7.9994463,
+        "longitude": -35.0438262,
+        "address": "R. Cel. Adolfo Maranhão, 55 - Pixete, São Lourenço da Mata - PE, 54730-410, Brazil",
+        "city": "São Lourenço da Mata",
+        "state": "Pernambuco",
+        "country": "Brazil"
+    },
+    "110": {
+        "latitude": 48.3293365,
+        "longitude": 16.1756595,
+        "address": "Klosterneuburger Str. 2, 3424, Austria",
+        "city": "Klosterneuburger",
+        "state": "Austria",
+        "country": "Austria"
+    },
+    "201": {
+        "latitude": 45.5328731,
+        "longitude": -122.6419663,
+        "address": "2305 NE Clackamas St, Portland, OR 97232, USA",
+        "city": "Portland",
+        "state": "Oregon",
+        "country": "USA"
+    },
+    "202": {
+        "latitude": 54.4170774,
+        "longitude": 24.0300968,
+        "address": "Vardos g. 26, Alytus, 62321 Alytaus m. sav., Lithuania",
+        "city": "Alytus",
+        "state": "Alytaus m. sav.",
+        "country": "Lithuania"
+    },
+    "203": {
+        "latitude": -26.2452608,
+        "longitude": 28.4541565,
+        "address": "32 Western Rd, Strubenvale, Springs, 1559, South Africa",
+        "city": "Strubenvale",
+        "state": "Springs",
+        "country": "South Africa"
+    },
+    "204": {
+        "latitude": 52.3446267,
+        "longitude": 6.6591558,
+        "address": "Hagedoornstraat 24, 7606 CW Almelo, Netherlands",
+        "city": "Almelo",
+        "state": "Almelo",
+        "country": "Netherlands"
+    },
+    "205": {
+        "latitude": 38.5132264,
+        "longitude": -76.6584768,
+        "address": "5998 Ketch Rd, Prince Frederick, MD 20678, USA",
+        "city": "Prince Frederick",
+        "state": "Maryland",
+        "country": "USA"
+    },
+    "206": {
+        "latitude": -20.4782915,
+        "longitude": -55.8014796,
+        "address": "571 Praça Ns Conceição, Rio de Janeiro, RJ, 22280-000, Brazil",
+        "city": "Mato Grosso do Sul",
+        "state": "Mato Grosso do Sul",
+        "country": "Brasil"
+    },
+    "207": {
+        "latitude": 29.7091506,
+        "longitude": -95.2353712,
+        "address": "10193 Lawndale St, Houston, TX 77017, USA",
+        "city": "Houston",
+        "state": "Texas",
+        "country": "USA"
+    },
+    "208": {
+        "latitude": 23.1860182,
+        "longitude": 89.1862415,
+        "address": "Jashore, Bangladesh",
+        "city": "Jashore",
+        "state": "Jashore",
+        "country": "Bangladesh"
+    },
+    "209": {
+        "latitude": 40.3816181,
+        "longitude": -74.5077067,
+        "address": "South Brunswick Township, New Jersey, USA",
+        "city": "South Brunswick Township",
+        "state": "New Jersey",
+        "country": "USA"
+    },
+    "210": {
+        "latitude": 28.6603787,
+        "longitude": 77.2180351,
+        "address": "Rio Mandi, Delhi, India",
+        "city": "Delhi",
+        "state": "Delhi",
+        "country": "India"
     }
 }
 
