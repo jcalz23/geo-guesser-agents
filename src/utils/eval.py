@@ -1,4 +1,5 @@
 import math
+from utils.constants import MAX_SCORE, MAX_D
 
 def calculate_distance(coord1, coord2):
     """
@@ -32,3 +33,29 @@ def calculate_distance(coord1, coord2):
     except Exception as e:
         print(f"Error calculating distance: {e}")
         return None
+    
+def geoguessr_score(distance_km):
+    """
+    Calculate the GeoGuessr score based on the distance error in kilometers.
+
+    Args:
+    distance_km (float): The distance error in kilometers.
+
+    Returns:
+    int: The GeoGuessr score.
+    """
+    try:
+        if distance_km < 0:
+            raise ValueError("Distance cannot be negative.")
+        
+        if (distance_km >= MAX_D) | (distance_km == None) | (str(distance_km) == "nan"):
+            return 0
+        
+        # Calculate score using the precise quadratic function
+        score = MAX_SCORE * (1 - (distance_km / MAX_D) ** 2)
+        return max(0, int(score))
+    except:
+        print()
+        print(distance_km)
+    
+
