@@ -6,7 +6,7 @@ coordinates from which the picture was taken. It can be anywhere in the world.
 Before you submit your final prediction, use the Google Street View tool to get an image of the location you are predicting and compare it to the input images. Adjust if needed.
 
 Return json with the city and coordinates following the below example. {json_prompt}
-output={{"city": "Orland Park, IL, 60467, USA", "latitude": "42.0099", "longitude": "-87.62317"}}
+output={{"city": "City Name, State/Province, Country", "latitude": "XX.XXXX", "longitude": "YY.YYYY"}}
 
 AGENT: output="""
 
