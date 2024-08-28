@@ -92,6 +92,7 @@ dependencies:
       - google-resumable-media==2.7.0
       - googleapis-common-protos==1.63.0
       - googlemaps==4.10.0
+      - grpcio==1.66.0
       - h11==0.14.0
       - httpcore==1.0.5
       - httplib2==0.22.0
@@ -111,12 +112,13 @@ dependencies:
       - kiwisolver==1.4.5
       - langchain==0.2.1
       - langchain-community==0.2.1
-      - langchain-core==0.2.1
+      - langchain-core==0.2.35
+      - langchain-google-community==1.0.8
       - langchain-openai==0.1.7
       - langchain-text-splitters==0.2.0
       - langchainhub==0.1.17
       - langgraph==0.0.55
-      - langsmith==0.1.63
+      - langsmith==0.1.105
       - markupsafe==2.1.5
       - marshmallow==3.21.2
       - matplotlib==3.8.4

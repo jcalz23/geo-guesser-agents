@@ -2,18 +2,11 @@ import os
 import json
 import base64
 import requests
-import getpass
 from PIL import Image
 from io import BytesIO
 from langchain_core.tools import Tool
 from langchain_google_community import GoogleSearchAPIWrapper
 from utils.constants import *
-
-# Get env vars
-if "GOOGLE_API_KEY" not in os.environ:
-    os.environ['GOOGLE_API_KEY'] = getpass.getpass("Enter your Google API key: ")
-if "GOOGLE_CSE_ID" not in os.environ:
-    os.environ["GOOGLE_CSE_ID"] = getpass.getpass("Enter your Google Search API key: ")
 
 
 def compress_image(image_path, max_size=(800, 800), quality=85):
@@ -97,8 +90,6 @@ def call_openai(model, sys_message, text_prompt, prompt_inputs, image_inputs=Non
 
     return json.loads(result)
 
-
-# Google Search API
 def top_n_results(query):
     """
     Fetches top N search results from Google Search API

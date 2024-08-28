@@ -1,26 +1,28 @@
+"""
+This script runs a single agent for processing location data.
+"""
 import os
 import sys
 import json
 import getpass
 import logging
-from datetime import datetime
 from typing import TypedDict, Annotated, Sequence
-
 import operator
+
 from langgraph.prebuilt import ToolNode
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import BaseMessage
 from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilySearchResults
-from langchain_community.tools import GooglePlacesTool
+from langchain_google_community import GooglePlacesTool
 from langchain_core.messages import HumanMessage
 from langchain.tools import StructuredTool
 
-sys.path.append('../../')
+sys.path.append('../')
 from utils.helpers import call_openai, prep_images, get_street_view_image
 from utils.eval import calculate_distance
 from utils.constants import *
-from prompts import *
+from prompts.single_agent import *
 
 # Set env vars
 os.environ['LANGCHAIN_TRACING_V2'] = 'false'
@@ -30,7 +32,7 @@ for var in required_env_vars:
         os.environ[var] = getpass.getpass(f"Enter your {var}: ")
 
 # Constants
-DATA_DIR = "../../../data/"
+DATA_DIR = "../data/"
 MODEL = "gpt-4o"
 
 # Define Agent State
@@ -124,14 +126,12 @@ class SingleAgentRunner:
         for step, output in enumerate(self.app.stream(inputs), start=1):
             for node, content in output.items():
                 # Log the step number and node name
-                logging.info(f"Step {step} - Node: {node}")
                 if 'data:image/jpeg;base64' in str(content):
-                    logging.info(f"{key}: [Image data]")
+                    logging.info(f"Step {step} - Node: {node} - [Sent image to LLM for analysis]")
                 else:
-                    logging.info(f"{key}: {content}")
-            logging.info(f"End of Step {step}")
-            logging.info("---")
-        logging.info(f"Final Output: {output}")
+                    logging.info(f"Step {step} - Node: {node} - {content}")
+            logging.info("--------------------------------")
+            logging.info("--------------------------------")
 
         # Log the completion of graph execution
         logging.info("Graph execution completed")
@@ -142,42 +142,10 @@ class SingleAgentRunner:
         pred = call_openai(MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
 
         # Log the prediction in a readable JSON format
-        logging.info(f"Prediction for {key}:")
-        logging.info(json.dumps(pred, indent=2))
+        logging.info(f"Prediction for {key}: {json.dumps(pred)}")
 
         # Calculate and log the distance
         distance = calculate_distance(pred, target_value)
         logging.info(f"Calculated distance for {key}: {distance} km")
         
         return distance
-
-    def run(self):
-        """Run the SingleAgentRunner to process all target locations."""
-        # Load target locations
-        with open(f'{DATA_DIR}master.json', 'r') as f:
-            target_locations = json.load(f)
-
-        # Define results file path
-        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        results_file_path = f'{DATA_DIR}/results/runs/single_agent_new_{current_time}.json'
-
-        # Loop through locations
-        all_results = {}
-        for key, value in target_locations.items():
-            print(f"Processing {key}")
-            try:
-                # Process location
-                distance = self.process_location(key, value)
-                all_results[key] = distance
-
-                # Save results to working dir with a runtime value
-                with open(results_file_path, 'w') as file:
-                    json.dump(all_results, file)
-
-            except Exception as e:
-                print(f"Error: {e}")
-                continue
-
-if __name__ == "__main__":
-    runner = SingleAgentRunner()
-    runner.run()
