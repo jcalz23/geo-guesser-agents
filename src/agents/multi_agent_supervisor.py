@@ -22,12 +22,9 @@ from langchain.tools import StructuredTool
 sys.path.append("..")
 from utils.helpers import call_openai, prep_images, get_street_view_image
 from utils.eval import calculate_distance
-from utils.constants import *
+from constants import *
 from prompts.multi_agent_supervisor import *
 
-# Constants
-MODEL = "gpt-4o"
-MEMBERS = ["Researcher", "Map_Searcher", "Street_Viewer"]
 
 class AgentState(TypedDict):
     """Type definition for agent state."""
@@ -71,7 +68,7 @@ class MultiAgentSupervisorRunner:
 
     def setup_model(self):
         """Set up the language model."""
-        self.model = ChatOpenAI(model=MODEL, temperature=0)
+        self.model = ChatOpenAI(model=MULTI_AGENT_MODEL, temperature=MULTI_AGENT_TEMPERATURE)
 
     def create_agent(self, tools: list, system_prompt: str) -> AgentExecutor:
         """
@@ -110,7 +107,7 @@ class MultiAgentSupervisorRunner:
     def create_supervisor_chain(self):
         """Create the supervisor chain for routing between agents."""
         # Define options and function definition
-        options = ["FINISH"] + MEMBERS
+        options = ["FINISH"] + MULTI_AGENT_MEMBERS
         function_def = {
             "name": "route",
             "description": "Select the next role.",
@@ -134,7 +131,7 @@ class MultiAgentSupervisorRunner:
             ("system", SUPERVISOR_SYS_PROMPT),
             MessagesPlaceholder(variable_name="messages"),
             SUPERVISOR_USER_PROMPT,
-        ]).partial(options=str(options), members=", ".join(MEMBERS))
+        ]).partial(options=str(options), MULTI_AGENT_MEMBERS=", ".join(MULTI_AGENT_MEMBERS))
 
         # Create supervisor chain
         return (
@@ -164,11 +161,11 @@ class MultiAgentSupervisorRunner:
         workflow.add_node("supervisor", supervisor_chain)
 
         # Add edges from each agent to supervisor
-        for member in MEMBERS:
+        for member in MULTI_AGENT_MEMBERS:
             workflow.add_edge(member, "supervisor")
 
         # Add conditional edges from supervisor to agents or end
-        conditional_map = {k: k for k in MEMBERS}
+        conditional_map = {k: k for k in MULTI_AGENT_MEMBERS}
         conditional_map["FINISH"] = END
         workflow.add_conditional_edges("supervisor", lambda x: x["next"], conditional_map)
 

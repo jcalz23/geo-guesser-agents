@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import base64
 import requests
@@ -6,7 +7,8 @@ from PIL import Image
 from io import BytesIO
 from langchain_core.tools import Tool
 from langchain_google_community import GoogleSearchAPIWrapper
-from utils.constants import *
+sys.path.append('../')
+from constants import *
 
 
 def compress_image(image_path, max_size=(800, 800), quality=85):

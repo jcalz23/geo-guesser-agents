@@ -6,7 +6,7 @@ import os
 import sys
 import logging
 import getpass
-from typing import Annotated, Any, Dict, List, Tuple, TypedDict, Union, Literal
+from typing import Any, Dict, List, TypedDict, Union, Literal, Optional
 
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_openai import ChatOpenAI
@@ -19,14 +19,8 @@ from langchain.tools import StructuredTool
 sys.path.append("..")
 from utils.helpers import prep_images, call_openai, get_street_view_image
 from utils.eval import calculate_distance
-from utils.constants import *
+from constants import *
 from prompts.react_agent import *
-
-
-# Constants
-MODEL = "gpt-4o"
-TEMPERATURE = 0.2
-CONFIG = {"recursion_limit": 20}
 
 
 class State(TypedDict):
@@ -92,7 +86,7 @@ class ReactAgentRunner:
     def setup_agents(self):
         """Set up the language model."""
         # Define agent executor, planner, replanner chains
-        llm = ChatOpenAI(model=MODEL, temperature=TEMPERATURE)
+        llm = ChatOpenAI(model=REACT_MODEL, temperature=REACT_TEMPERATURE)
         self.agent_executor = create_react_agent(llm, self.tools, messages_modifier=REACT_PROMPT)
         self.planner = PLANNER_PROMPT | llm.with_structured_output(Plan)
         self.replanner = REPLANNER_PROMPT | llm.with_structured_output(Act)   
@@ -138,7 +132,7 @@ class ReactAgentRunner:
             "input": state["input"],
             "plan": state["plan"],
             "past_steps_results": state["past_steps_results"],
-            "remaining_steps": CONFIG["recursion_limit"] - state["num_steps_used"] - 1
+            "remaining_steps": REACT_RECURSION_LIMIT - state["num_steps_used"] - 1
         })
 
         # Determine if the output is a response or a plan
@@ -193,12 +187,12 @@ class ReactAgentRunner:
 
         # Create initial input
         text_prompt = INITIAL_PROMPT_TEMPLATE.format(
-            json_prompt=JSON_PROMPT, recursion_limit=CONFIG["recursion_limit"]
+            json_prompt=JSON_PROMPT, recursion_limit=REACT_RECURSION_LIMIT
             )
         inputs = {"input": text_prompt, "images": image_inputs, "num_steps_used": 0, "past_steps_results": []}
 
         # Run app with streaming
-        for event in self.graph.stream(inputs, config=CONFIG):
+        for event in self.graph.stream(inputs, config={"recursion_limit": REACT_RECURSION_LIMIT}):
             for k, v in event.items():
                 if k != "__end__":
                     if 'data:image/jpeg;base64' in str(v):
@@ -211,7 +205,7 @@ class ReactAgentRunner:
         # Format the final output
         prompt_inputs = {"pred": str(event), "json_prompt": JSON_PROMPT}
         sys_message = {"role": "system", "content": "Return valid json given input."}
-        pred = call_openai(MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
+        pred = call_openai(REACT_MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
 
         # Calculate the distance
         distance = calculate_distance(pred, target_value)

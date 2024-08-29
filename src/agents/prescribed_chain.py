@@ -14,11 +14,9 @@ import googlemaps
 sys.path.append("..")
 from utils.helpers import call_openai, prep_images, get_top_n_results
 from utils.eval import calculate_distance
-from utils.constants import *
+from constants import *
 from prompts.prescribed_chain import *
 
-# Constants
-MODEL = "gpt-4o"
 
 # Get keys
 if "OPENAI_API_KEY" not in os.environ:
@@ -55,7 +53,7 @@ class PrescribedChainAgent:
         ## Run OpenAI API calls
         # Describe image
         prompt_inputs = {"json_prompt": JSON_PROMPT}
-        text_results = call_openai(MODEL, SYS_MESSAGE, DESCRIBE_TEXT_PROMPT, prompt_inputs, image_inputs)
+        text_results = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_TEXT_PROMPT, prompt_inputs, image_inputs)
         logging.info("--------------------------------")
         logging.info("--------------------------------")
         logging.info(f"Text results: {text_results}")
@@ -63,7 +61,7 @@ class PrescribedChainAgent:
         logging.info("--------------------------------")
 
         # Describe image scenery
-        scene_results = call_openai(MODEL, SYS_MESSAGE, DESCRIBE_SCENE_PROMPT, prompt_inputs, image_inputs)
+        scene_results = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_SCENE_PROMPT, prompt_inputs, image_inputs)
         logging.info(f"Scene results: {scene_results}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
@@ -71,14 +69,14 @@ class PrescribedChainAgent:
         # Come up with potential city candidates
         prompt_inputs["text_results"] = text_results
         prompt_inputs["scene_results"] = scene_results
-        candidates = call_openai(MODEL, SYS_MESSAGE, CANDIDATES_PROMPT, prompt_inputs)
+        candidates = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, CANDIDATES_PROMPT, prompt_inputs)
         logging.info(f"Candidates: {candidates}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
 
         # Come up with Google searches
         prompt_inputs["candidates"] = candidates
-        queries = call_openai(MODEL, SYS_MESSAGE, SEARCH_PROMPT, prompt_inputs)
+        queries = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, SEARCH_PROMPT, prompt_inputs)
         logging.info(f"Queries: {queries}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
@@ -94,7 +92,7 @@ class PrescribedChainAgent:
 
         # Predict location
         prompt_inputs["search_results"] = search_results
-        pred = call_openai(MODEL, SYS_MESSAGE, GEO_GUESSER_PROMPT, prompt_inputs)
+        pred = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, GEO_GUESSER_PROMPT, prompt_inputs)
         logging.info(f"Pred: {pred}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
