@@ -8,11 +8,11 @@ import os
 import sys
 import logging
 import getpass
-from typing import Dict, Any
+from typing import List, Dict, Any, Tuple
 import googlemaps
 
 sys.path.append("..")
-from utils.helpers import call_openai, prep_images, get_top_n_results
+from utils.helpers import call_openai, get_top_n_results
 from utils.eval import calculate_distance
 from constants import *
 from prompts.prescribed_chain import *
@@ -42,18 +42,23 @@ class PrescribedChainAgent:
         logging.getLogger("langchain.callbacks.shared").setLevel(logging.WARNING)
         logging.getLogger("httpx").setLevel(logging.WARNING)
 
-    def process_location(self, key: str, target: Any) -> float:
+    def process_location(self, image_list: List[str], target: Dict[str, Any]) -> Tuple[str, float]:
         """
         Processes a single location with the prescribed chain agent.
-        """
-        # Load images
-        image_dir = f'../data/locations/{key}/'
-        image_inputs = prep_images(image_dir)
 
+        Args:
+            image_list (List[str]): A list of file paths to the images.
+            target (Dict[str, Any]): A dictionary containing the target location information.
+
+        Returns:
+            float: The distance between the predicted location and the target location.
+        """
         ## Run OpenAI API calls
         # Describe image
         prompt_inputs = {"json_prompt": JSON_PROMPT}
-        text_results = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_TEXT_PROMPT, prompt_inputs, image_inputs)
+        text_results = call_openai(
+            PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_TEXT_PROMPT, prompt_inputs, image_list
+            )
         logging.info("--------------------------------")
         logging.info("--------------------------------")
         logging.info(f"Text results: {text_results}")
@@ -61,7 +66,9 @@ class PrescribedChainAgent:
         logging.info("--------------------------------")
 
         # Describe image scenery
-        scene_results = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_SCENE_PROMPT, prompt_inputs, image_inputs)
+        scene_results = call_openai(
+            PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_SCENE_PROMPT, prompt_inputs, image_list
+            )
         logging.info(f"Scene results: {scene_results}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
@@ -94,12 +101,13 @@ class PrescribedChainAgent:
         prompt_inputs["search_results"] = search_results
         pred = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, GEO_GUESSER_PROMPT, prompt_inputs)
         logging.info(f"Pred: {pred}")
-        logging.info("--------------------------------")
-        logging.info("--------------------------------")
 
         ## Evals
-        # Calculate distance
-        distance = calculate_distance(pred, target)
-        logging.info(f"Distance: {distance} km")
+        if target:
+         # Calculate distance
+            distance = calculate_distance(pred, target)
+            logging.info(f"Distance: {distance} km")
+        else:
+            distance = None
 
-        return distance
+        return pred, distance

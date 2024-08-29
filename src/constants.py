@@ -1,6 +1,3 @@
-# Image parameters
-directions = ["north", "south", "east", "west"]
-
 # Search parameters
 TOP_N_SEARCHES = 3
 

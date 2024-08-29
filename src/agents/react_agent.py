@@ -4,9 +4,10 @@ React Agent for GeoGuessr location identification
 # Imports
 import os
 import sys
+import json
 import logging
 import getpass
-from typing import Any, Dict, List, TypedDict, Union, Literal, Optional
+from typing import Any, Dict, List, TypedDict, Union, Literal, Tuple
 
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_openai import ChatOpenAI
@@ -170,26 +171,23 @@ class ReactAgentRunner:
         app = workflow.compile()
         return app
 
-    def process_location(self, key: str, target_value: dict) -> float:
+    def process_location(self, image_list: List[str], target_dict: Dict[str, Any]) -> Tuple[str, float]:
         """
         Process a single location.
 
         Args:
-            key (str): The location key.
-            target_value (dict): The target value for the location.
+            image_list (List[str]): The list of encoded images.
+            target_dict (dict): The target value for the location.
 
         Returns:
-            float: The calculated distance.
+            pred (str): The predicted location.
+            distance (float): The calculated distance.
         """
-        # Load images
-        image_dir = f'../data/locations/{key}/'
-        image_inputs = prep_images(image_dir)
-
         # Create initial input
         text_prompt = INITIAL_PROMPT_TEMPLATE.format(
             json_prompt=JSON_PROMPT, recursion_limit=REACT_RECURSION_LIMIT
-            )
-        inputs = {"input": text_prompt, "images": image_inputs, "num_steps_used": 0, "past_steps_results": []}
+        )
+        inputs = {"input": text_prompt, "images": image_list, "num_steps_used": 0, "past_steps_results": []}
 
         # Run app with streaming
         for event in self.graph.stream(inputs, config={"recursion_limit": REACT_RECURSION_LIMIT}):
@@ -206,9 +204,13 @@ class ReactAgentRunner:
         prompt_inputs = {"pred": str(event), "json_prompt": JSON_PROMPT}
         sys_message = {"role": "system", "content": "Return valid json given input."}
         pred = call_openai(REACT_MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
+        logging.info(f"Prediction: {json.dumps(pred)}")
 
-        # Calculate the distance
-        distance = calculate_distance(pred, target_value)
-        logging.info(f"Distance: {distance} km")
+        # Calculate and log the distance
+        if target_dict:
+            distance = calculate_distance(pred, target_dict)
+            logging.info(f"Calculated distance: {distance} km")
+        else:
+            distance = None
 
-        return distance
+        return pred, distance

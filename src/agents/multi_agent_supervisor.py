@@ -3,11 +3,12 @@ This module runs a multi-agent supervisor for predicting location from a street 
 """
 import os
 import sys
+import json
 import logging
 import getpass
 import functools
 import operator
-from typing import Annotated, Sequence, TypedDict
+from typing import Annotated, Sequence, TypedDict, Dict, Any, List, Tuple
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langgraph.graph import StateGraph, END
@@ -20,7 +21,7 @@ from langchain_core.output_parsers.openai_functions import JsonOutputFunctionsPa
 from langchain.tools import StructuredTool
 
 sys.path.append("..")
-from utils.helpers import call_openai, prep_images, get_street_view_image
+from utils.helpers import call_openai, get_street_view_image
 from utils.eval import calculate_distance
 from constants import *
 from prompts.multi_agent_supervisor import *
@@ -105,7 +106,7 @@ class MultiAgentSupervisorRunner:
         return {"messages": [HumanMessage(content=result["output"], name=name)]}
 
     def create_supervisor_chain(self):
-        """Create the supervisor chain for routing between agents."""
+        """Create the supervisor chain for routing between agents"""
         # Define options and function definition
         options = ["FINISH"] + MULTI_AGENT_MEMBERS
         function_def = {
@@ -131,7 +132,7 @@ class MultiAgentSupervisorRunner:
             ("system", SUPERVISOR_SYS_PROMPT),
             MessagesPlaceholder(variable_name="messages"),
             SUPERVISOR_USER_PROMPT,
-        ]).partial(options=str(options), MULTI_AGENT_MEMBERS=", ".join(MULTI_AGENT_MEMBERS))
+        ]).partial(options=str(options), members=", ".join(MULTI_AGENT_MEMBERS))
 
         # Create supervisor chain
         return (
@@ -173,24 +174,21 @@ class MultiAgentSupervisorRunner:
         workflow.set_entry_point("supervisor")
         return workflow.compile()
 
-    def process_location(self, key: str, target_value: dict) -> float:
+    def process_location(self, image_list: List[str], target_dict: Dict[str, Any]) -> Tuple[str, float]:
         """
         Process a single location.
 
         Args:
-            key (str): The location key.
-            target_value (dict): The target value for the location.
+            image_list (list): The list of encoded images.
+            target_dict (dict): The target value for the location.
 
         Returns:
-            float: The calculated distance.
+            pred (str): The predicted location.
+            distance (float): The calculated distance.
         """
-        # Load images
-        image_dir = f'../data/locations/{key}/'
-        image_inputs = prep_images(image_dir)
-
         # Define initial input
         text_input = [{"type": "text", "text": text_prompt}]
-        inputs = {"messages": [HumanMessage(content=text_input + image_inputs)]}
+        inputs = {"messages": [HumanMessage(content=text_input + image_list)]}
 
         # Run the graph and log outputs
         for output in self.graph.stream(inputs):
@@ -203,11 +201,14 @@ class MultiAgentSupervisorRunner:
         # Format the final output
         prompt_inputs = {"pred": str(prev_output), "json_prompt": JSON_PROMPT}
         sys_message = {"role": "system", "content": "Return valid json given input."}
-        pred = call_openai(MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
-        logging.info(f"Prediction: {pred}")
+        pred = call_openai(MULTI_AGENT_MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
+        logging.info(f"Prediction: {json.dumps(pred)}")
 
-        # Calculate the distance
-        distance = calculate_distance(pred, target_value)
-        logging.info(f"Distance: {distance} km")
+        # Calculate and log the distance
+        if target_dict:
+            distance = calculate_distance(pred, target_dict)
+            logging.info(f"Calculated distance: {distance} km")
+        else:
+            distance = None
 
-        return distance
+        return pred, distance

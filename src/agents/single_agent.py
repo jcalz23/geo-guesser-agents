@@ -104,19 +104,22 @@ class SingleAgentRunner:
 
         return app
 
-    def process_location(self, key, target_value):
-        """Process a single location."""
+    def process_location(self, image_list, target_dict):
+        """Process a single location.
+        Args:
+            image_list (List[str]): List of image paths.
+            target_dict (Dict[str, Any]): Target dictionary containing target location details.
+        Returns:
+            Tuple[str, float]: Predicted location and calculated distance.
+        """
         # Prep initial inputs with prompt + images
-        image_dir = f'../data/locations/{key}/'
-        image_inputs = prep_images(image_dir, max_size=(600,600), quality=85)
-        inputs = {"messages": [HumanMessage(content=text_input + image_inputs)]}
+        inputs = {"messages": [HumanMessage(content=text_input + image_list)]}
 
         # Log the total number of tokens in the input
         total_tokens = self.model.get_num_tokens(str(inputs["messages"]))
         logging.info(f"Total tokens in input: {total_tokens}")
         
         # Log the start of processing for this location
-        logging.info(f"Starting processing for location: {key}")
         logging.info("Graph execution stream:")
 
         # Iterate through each step of the graph execution
@@ -136,13 +139,14 @@ class SingleAgentRunner:
         # Use LLM to format final output in expected json
         prompt_inputs = {"pred": str(output), "json_prompt": JSON_PROMPT}
         sys_message = {"role": "system", "content": "Return valid json given input."}
-        pred = call_openai(SIN, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
-
-        # Log the prediction in a readable JSON format
-        logging.info(f"Prediction for {key}: {json.dumps(pred)}")
+        pred = call_openai(SINGLE_AGENT_MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
+        logging.info(f"Prediction: {json.dumps(pred)}")
 
         # Calculate and log the distance
-        distance = calculate_distance(pred, target_value)
-        logging.info(f"Calculated distance for {key}: {distance} km")
-        
-        return distance
+        if target_dict:
+            distance = calculate_distance(pred, target_dict)
+            logging.info(f"Calculated distance: {distance} km")
+        else:
+            distance = None
+
+        return pred, distance

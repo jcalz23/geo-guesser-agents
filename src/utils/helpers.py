@@ -46,11 +46,13 @@ def prep_images(image_id_dir, max_size=(512, 512), quality=85):
         list: List of image inputs
     """
     image_inputs = []
-    for direction in directions:
-        compressed_img = compress_image(f"{image_id_dir}{direction}.png", max_size=max_size, quality=quality)
-        encoded_img = base64.b64encode(compressed_img).decode('utf-8')
-        image_input = {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_img}"}}
-        image_inputs.append(image_input)
+    for image_file in os.listdir(image_id_dir):
+        if image_file.lower().endswith(('.png', '.jpg', '.jpeg')):
+            image_path = os.path.join(image_id_dir, image_file)
+            compressed_img = compress_image(image_path, max_size=max_size, quality=quality)
+            encoded_img = base64.b64encode(compressed_img).decode('utf-8')
+            image_input = {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_img}"}}
+            image_inputs.append(image_input)
 
     return image_inputs
 
