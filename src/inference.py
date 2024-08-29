@@ -70,7 +70,7 @@ class InferenceRunner:
             str: The file path for storing results.
         """
         current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        return f'../data/results/runs/{self.agent_name}_{current_time}.json'
+        return f'../data/results/runs/all/{self.agent_name}_{current_time}.json'
 
     def load_test_set(self) -> Dict[str, Any]:
         """
