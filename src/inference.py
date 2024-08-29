@@ -117,7 +117,6 @@ class InferenceRunner:
         Returns:
             Tuple[str, float]: The predicted location and the distance.
         """
-        logger.info("process=eval_single_image, msg=Starting inference run")
         # Define inputs
         key = self.image_dir.split('/')[-1]
         target_dict = None
@@ -126,7 +125,6 @@ class InferenceRunner:
         
         # Run inference
         self.inference(key, self.image_dir, target_dict, output_dict={})
-        logger.info(f"process=eval_single_image, msg=Inference completed. Results saved to {self.results_file_path}")
         return "Evaluation completed"
 
     def eval_test_set(self):
@@ -158,14 +156,13 @@ class InferenceRunner:
 
     def main(self):
         """Run inference on the test set or single image directory using the selected agent."""
-        logger.info(f"Starting inference with agent: {self.agent_name}")
+        logger.info(f"\n-----INFERENCE: {self.agent_name}-----")
         if self.image_dir:
             result = self.eval_single_image()
         elif self.test_set_path:
             result = self.eval_test_set()
         else:
             raise ValueError("Either test_set_path or image_dir must be provided.")
-        logger.info(f"Inference completed. Result: {result}")
         return result
 
 def get_agent(agent_name: str) -> AgentRunner:

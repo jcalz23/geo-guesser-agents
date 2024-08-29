@@ -21,9 +21,9 @@ if os.path.exists(log_file):
     os.remove(log_file)  # Remove existing log file
 
 # Configure root logger
-logging.basicConfig(level=logging.INFO, format='%(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 file_handler = RotatingFileHandler(log_file, maxBytes=1024 * 1024, backupCount=5)
-file_handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
+file_handler.setFormatter(logging.Formatter('%(message)s'))
 root_logger = logging.getLogger()
 root_logger.addHandler(file_handler)
 
@@ -49,7 +49,7 @@ async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 @app.post("/upload")
 async def upload_images(files: List[UploadFile] = File(...)):
-    logger.info("Starting image upload process")
+    logger.info("-----UPLOAD-----")
     # Reset the upload directory before new uploads
     reset_upload_dir()
     logger.info(f"Upload directory reset: {UPLOAD_DIR}")
@@ -61,19 +61,15 @@ async def upload_images(files: List[UploadFile] = File(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         filenames.append(file.filename)
-        logger.info(f"File uploaded successfully: {file.filename}")
-    
     logger.info(f"Upload process completed. Total files uploaded: {len(filenames)}")
     return {"filenames": filenames}
 
 @app.post("/predict")
 async def predict(agent_name: str = Form(...)):
-    logger.info(f"Received prediction request for agent: {agent_name}")
     try:
         selected_agent = get_agent(agent_name)
         runner = InferenceRunner(selected_agent, agent_name, None, UPLOAD_DIR, None, None)
         result = runner.main()
-        logger.info(f"Prediction completed. Result: {result}")
         return Response(status_code=204)
     except Exception as e:
         logger.error(f"Error during prediction: {str(e)}")

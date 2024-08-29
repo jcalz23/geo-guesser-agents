@@ -19,7 +19,7 @@ from langchain_core.messages import HumanMessage
 from langchain.tools import StructuredTool
 
 sys.path.append('../')
-from src.utils.helpers import call_openai, prep_images, get_street_view_image
+from src.utils.helpers import call_openai, get_street_view_image
 from src.utils.eval import calculate_distance
 from src.constants import *
 from src.prompts.single_agent import *
@@ -127,9 +127,9 @@ class SingleAgentRunner:
             for node, content in output.items():
                 # Log the step number and node name
                 if 'data:image/jpeg;base64' in str(content):
-                    logging.info(f"Step {step} - Node: {node} - [Sent image to LLM for analysis]")
+                    logging.info(f"Step {step} - {node} - [Sent image to LLM for analysis]")
                 else:
-                    logging.info(f"Step {step} - Node: {node} - {content}")
+                    logging.info(f"Step {step} - {node} - {content}")
             logging.info("--------------------------------")
             logging.info("--------------------------------")
 
@@ -140,7 +140,7 @@ class SingleAgentRunner:
         prompt_inputs = {"pred": str(output), "json_prompt": JSON_PROMPT}
         sys_message = {"role": "system", "content": "Return valid json given input."}
         pred = call_openai(SINGLE_AGENT_MODEL, sys_message, PRED_FORMAT_PROMPT_TEMPLATE, prompt_inputs)
-        logging.info(f"Prediction: {json.dumps(pred)}")
+        logging.info(f"\nPrediction: {json.dumps(pred)}\n")
 
         # Calculate and log the distance
         if target_dict:

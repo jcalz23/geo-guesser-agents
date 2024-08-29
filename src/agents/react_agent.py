@@ -18,7 +18,7 @@ from langgraph.prebuilt import create_react_agent
 from langchain.tools import StructuredTool
 
 sys.path.append("..")
-from src.utils.helpers import prep_images, call_openai, get_street_view_image
+from src.utils.helpers import call_openai, get_street_view_image
 from src.utils.eval import calculate_distance
 from src.constants import *
 from src.prompts.react_agent import *
@@ -115,15 +115,29 @@ class ReactAgentRunner:
         # Execute the step
         agent_response = self.agent_executor.invoke({"messages": messages})
 
+        # Log the most recent tool call
+        messages = agent_response.get("messages", [])
+        for message in reversed(messages):
+            if hasattr(message, 'additional_kwargs') and 'tool_calls' in message.additional_kwargs:
+                tool_calls = message.additional_kwargs['tool_calls']
+                if tool_calls:
+                    most_recent_tool_call = tool_calls[-1]
+                    logging.info(f"Most recent tool call:")
+                    logging.info(f"Tool: {most_recent_tool_call['function']['name']}")
+                    logging.info(f"Arguments: {most_recent_tool_call['function']['arguments']}")
+                    break
+
         # Return the updated steps for next iteration
         step_result = {
             "num_steps_used": state["num_steps_used"] + 1
         }
-        step_result["past_steps_results"] = state["past_steps_results"] + [{
+        recent_step_result = {
             "step_num": state["num_steps_used"],
             "step": task,
             "result": agent_response["messages"][-1].content
-        }]
+        }
+        logging.info(f"Last step result: {recent_step_result}")
+        step_result["past_steps_results"] = state["past_steps_results"] + [recent_step_result]
         return step_result
 
     def replan_step(self, state: State):

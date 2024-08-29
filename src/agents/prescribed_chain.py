@@ -59,9 +59,7 @@ class PrescribedChainAgent:
         text_results = call_openai(
             PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_TEXT_PROMPT, prompt_inputs, image_list
             )
-        logging.info("--------------------------------")
-        logging.info("--------------------------------")
-        logging.info(f"Text results: {text_results}")
+        logging.info(f"Step 1a - Extract text from image: {text_results}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
 
@@ -69,7 +67,7 @@ class PrescribedChainAgent:
         scene_results = call_openai(
             PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, DESCRIBE_SCENE_PROMPT, prompt_inputs, image_list
             )
-        logging.info(f"Scene results: {scene_results}")
+        logging.info(f"Step 1b - Describe image scenery: {scene_results}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
 
@@ -77,14 +75,14 @@ class PrescribedChainAgent:
         prompt_inputs["text_results"] = text_results
         prompt_inputs["scene_results"] = scene_results
         candidates = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, CANDIDATES_PROMPT, prompt_inputs)
-        logging.info(f"Candidates: {candidates}")
+        logging.info(f"Step 2 - Come up with potential city candidates: {candidates}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
 
         # Come up with Google searches
         prompt_inputs["candidates"] = candidates
         queries = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, SEARCH_PROMPT, prompt_inputs)
-        logging.info(f"Queries: {queries}")
+        logging.info(f"Step 3a - Come up with Google searches: {queries}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
 
@@ -93,14 +91,14 @@ class PrescribedChainAgent:
         for search_id, query in queries.items():
             result = get_top_n_results(GOOGLE_SEARCH_DESCRIPTION, query)
             search_results[search_id] = result
-        logging.info(f"Search results: {search_results}")
+        logging.info(f"Step 3b - Run Google searches: {search_results}")
         logging.info("--------------------------------")
         logging.info("--------------------------------")
 
         # Predict location
         prompt_inputs["search_results"] = search_results
         pred = call_openai(PRESCRIBED_CHAIN_MODEL, SYS_MESSAGE, GEO_GUESSER_PROMPT, prompt_inputs)
-        logging.info(f"Pred: {pred}")
+        logging.info(f"Prediction: {pred}\n")
 
         ## Evals
         if target:

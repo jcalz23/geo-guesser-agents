@@ -102,7 +102,14 @@ class MultiAgentSupervisorRunner:
         Returns:
             dict: Updated state with new message.
         """
+        logging.info(f"**{name}**")
+        try:
+            last_message = [x for x in state['messages'][-1].content if x.get('type') == 'text']
+            logging.info(f"INPUT: \n{last_message[-1].get('text')}")
+        except Exception as e:
+            logging.info(f"INPUT: \n{state['messages'][-1].content}")
         result = agent.invoke(state)
+        logging.info(f"\nOUTPUT: \n{result["output"]}")
         return {"messages": [HumanMessage(content=result["output"], name=name)]}
 
     def create_supervisor_chain(self):
@@ -194,7 +201,8 @@ class MultiAgentSupervisorRunner:
         for output in self.graph.stream(inputs):
             if "FINISH" not in str(output):
                 prev_output = output
-                logging.info(output)
+                if isinstance(output, dict) and "supervisor" in output:
+                    logging.info(output)
                 logging.info("----------------------------------")
                 logging.info("----------------------------------")
 

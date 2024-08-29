@@ -8,7 +8,7 @@ JSON_PROMPT = "Only return a valid json string (RCF8259). Do provide any other c
 INITIAL_PROMPT_TEMPLATE = """USER: Given a set of streetview images from a vehicle, your task is to determine the coordinates from which the picture was taken. It can be anywhere in the world. You have a recursion limit of {recursion_limit}, so make sure to return a prediction before that is reached.
 
 Return json with a single guess for the city and the coordinates following the below example. {json_prompt}
-output={{"location": "City, State, Country", "latitude": "XX.XXXXXX", "longitude": "XX.XXXXXX"}}
+output={{"location": "City, State, Country", "latitude": "123.123123", "longitude": "456.456456"}}
 
 AGENT: output="""
 
