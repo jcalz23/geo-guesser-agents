@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Upload and Prediction</title>
+    <script>
+        async function uploadImages(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('filenames').value = result.filenames.join(', ');
+        }
+
+        async function predict() {
+            const formData = new FormData(document.getElementById('uploadForm'));
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('result').innerText = JSON.stringify(result, null, 2);
+        }
+
+        function startLogStream() {
+            const logContainer = document.getElementById('logContainer');
+            const eventSource = new EventSource('/stream_logs');
+            eventSource.onmessage = function(event) {
+                logContainer.innerHTML += event.data + '<br>';
+                logContainer.scrollTop = logContainer.scrollHeight;
+            };
+        }
+    </script>
+</head>
+<body onload="startLogStream()">
+    <h1>Image Upload and Prediction</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="files" multiple>
+        <select name="agent_name">
+            <option value="single_agent">Single Agent</option>
+            <option value="prescribed_chain">Prescribed Chain</option>
+            <option value="multi_agent_supervisor">Multi-Agent Supervisor</option>
+            <option value="react_agent">React Agent</option>
+        </select>
+        <button type="button" onclick="predict()">Predict</button>
+    </form>
+    <div id="result"></div>
+    <h2>Logs</h2>
+    <div id="logContainer" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div>
+</body>
+</html>

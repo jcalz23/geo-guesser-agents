@@ -12,10 +12,10 @@ from typing import List, Dict, Any, Tuple
 import googlemaps
 
 sys.path.append("..")
-from utils.helpers import call_openai, get_top_n_results
-from utils.eval import calculate_distance
-from constants import *
-from prompts.prescribed_chain import *
+from src.utils.helpers import call_openai, get_top_n_results
+from src.utils.eval import calculate_distance
+from src.constants import *
+from src.prompts.prescribed_chain import *
 
 
 # Get keys

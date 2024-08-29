@@ -1,7 +1,7 @@
 import math
 import sys
 sys.path.append('../')
-from constants import MAX_SCORE, MAX_D
+from src.constants import MAX_SCORE, MAX_D
 
 def calculate_distance(coord1, coord2):
     """

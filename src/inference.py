@@ -1,6 +1,7 @@
 """
 This script allows users to select an agent and run inference on a test set.
 """
+import sys
 import json
 import logging
 import argparse
@@ -8,14 +9,13 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional, List, Tuple
 
-from agents.single_agent import SingleAgentRunner
-from agents.prescribed_chain import PrescribedChainAgent
-from agents.multi_agent_supervisor import MultiAgentSupervisorRunner
-from agents.react_agent import ReactAgentRunner
-from utils.helpers import prep_images
+from src.agents.single_agent import SingleAgentRunner
+from src.agents.prescribed_chain import PrescribedChainAgent
+from src.agents.multi_agent_supervisor import MultiAgentSupervisorRunner
+from src.agents.react_agent import ReactAgentRunner
+from src.utils.helpers import prep_images
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Remove the existing logging setup and use this instead:
 logger = logging.getLogger(__name__)
 
 
@@ -127,6 +127,7 @@ class InferenceRunner:
         # Run inference
         self.inference(key, self.image_dir, target_dict, output_dict={})
         logger.info(f"process=eval_single_image, msg=Inference completed. Results saved to {self.results_file_path}")
+        return "Evaluation completed"
 
     def eval_test_set(self):
         """Run inference on the test set using the selected agent.
@@ -153,15 +154,19 @@ class InferenceRunner:
                 logger.error(f"process=eval_test_set, msg=Error processing {key}: {e}", exc_info=True)
                 continue
         logger.info(f"process=eval_test_set, msg=Inference completed. Results saved to {self.results_file_path}")
+        return "Test set evaluation completed"
 
     def main(self):
         """Run inference on the test set or single image directory using the selected agent."""
+        logger.info(f"Starting inference with agent: {self.agent_name}")
         if self.image_dir:
-            self.eval_single_image()
+            result = self.eval_single_image()
         elif self.test_set_path:
-            self.eval_test_set()
+            result = self.eval_test_set()
         else:
             raise ValueError("Either test_set_path or image_dir must be provided.")
+        logger.info(f"Inference completed. Result: {result}")
+        return result
 
 def get_agent(agent_name: str) -> AgentRunner:
     """

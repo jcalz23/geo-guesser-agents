@@ -8,7 +8,7 @@ from io import BytesIO
 from langchain_core.tools import Tool
 from langchain_google_community import GoogleSearchAPIWrapper
 sys.path.append('../')
-from constants import *
+from src.constants import *
 
 
 def compress_image(image_path, max_size=(800, 800), quality=85):
