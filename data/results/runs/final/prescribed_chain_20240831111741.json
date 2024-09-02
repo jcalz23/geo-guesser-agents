@@ -1,0 +1,162 @@
+{
+    "101": {
+        "pred": {
+            "city": "Bangkok, Thailand",
+            "latitude": "13.7563",
+            "longitude": "100.5018"
+        },
+        "distance": 458.28
+    },
+    "102": {
+        "pred": {
+            "city": "Mumbai, Maharashtra, India",
+            "latitude": "19.0760",
+            "longitude": "72.8777"
+        },
+        "distance": 865.0
+    },
+    "103": {
+        "pred": {
+            "city": "Paris, Ile-de-France, France",
+            "latitude": "48.8566",
+            "longitude": "2.3522"
+        },
+        "distance": 398.67
+    },
+    "104": {
+        "pred": {
+            "city": "Strasbourg",
+            "latitude": "48.5734",
+            "longitude": "7.7521"
+        },
+        "distance": 885.31
+    },
+    "105": {
+        "pred": {
+            "city": "Seattle, WA, USA",
+            "latitude": "47.6062",
+            "longitude": "-122.3321"
+        },
+        "distance": 907.97
+    },
+    "106": {
+        "pred": {
+            "city": "Madrid, Spain",
+            "latitude": "40.4168",
+            "longitude": "-3.7038"
+        },
+        "distance": 280.11
+    },
+    "107": {
+        "pred": {
+            "city": "Vienna, Austria",
+            "latitude": "48.2082",
+            "longitude": "16.3738"
+        },
+        "distance": 156.04
+    },
+    "108": {
+        "pred": {
+            "city": "Bodrum, Turkey",
+            "latitude": "37.0344",
+            "longitude": "27.4305"
+        },
+        "distance": 16.8
+    },
+    "109": {
+        "pred": {
+            "city": "Rio de Janeiro, RJ, Brazil",
+            "latitude": "-22.9068",
+            "longitude": "-43.1729"
+        },
+        "distance": 1871.2
+    },
+    "110": {
+    "pred": {
+            "city": "Deutschkreutz, Austria",
+            "latitude": "47.5995",
+            "longitude": "16.6481"
+        },
+        "distance": 88.45
+    },
+    "201": {
+        "pred": {
+            "city": "Seattle, WA, USA",
+            "latitude": "47.6062",
+            "longitude": "-122.3321"
+        },
+        "distance": 231.76
+    },
+    "202": {
+        "pred": {
+            "city": "Nairobi",
+            "latitude": "-1.2921",
+            "longitude": "36.8219"
+        },
+        "distance": 6305.26
+    },
+    "203": {
+        "pred": {
+            "city": "Des Moines, IA, USA",
+            "latitude": "41.5868",
+            "longitude": "-93.625"
+        },
+        "distance": 14513.89
+    },
+    "204": {
+        "pred": {
+            "city": "Amsterdam, Netherlands",
+            "latitude": "52.3676",
+            "longitude": "4.9041"
+        },
+        "distance": 119.21
+    },
+    "205": {
+        "pred": {
+            "city": "San Diego, CA, USA",
+            "latitude": "32.7157",
+            "longitude": "-117.1611"
+        },
+        "distance": 3687.39
+    },
+    "206": {
+        "pred": {
+            "city": "Kolkata, India",
+            "latitude": "22.5726",
+            "longitude": "88.3639"
+        },
+        "distance": 16309.76
+    },
+    "207": {
+        "pred": {
+            "city": "Houston, TX, USA",
+            "latitude": "29.7604",
+            "longitude": "-95.3698"
+        },
+        "distance": 14.18
+    },
+    "208": {
+        "pred": {
+            "city": "Kolkata, India",
+            "latitude": "22.5726",
+            "longitude": "88.3639"
+        },
+        "distance": 108.4
+    },
+    "209": {
+        "pred": {
+            "city": "Los Angeles, CA, USA",
+            "latitude": "34.0522",
+            "longitude": "-118.2437"
+        },
+        "distance": 3895.87
+    },
+    "210": {
+        "pred": {
+            "city": "Mumbai, Maharashtra, India",
+            "latitude": "19.0760",
+            "longitude": "72.8777"
+        },
+        "distance": 1153.19
+    }
+}

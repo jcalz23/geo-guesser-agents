@@ -1,0 +1,146 @@
+{
+    "101": {
+        "pred": {
+            "city": "Ratchaburi, Thailand",
+            "latitude": "13.533000",
+            "longitude": "99.617000"
+        },
+        "distance": 536.92
+    },
+    "102": {
+        "pred": {
+            "city": "Salem, Tamil Nadu, India",
+            "latitude": "11.6643",
+            "longitude": "78.1460"
+        },
+        "distance": 136.0
+    },
+    "103": {
+        "pred": {
+            "city": "Paris, \u00cele-de-France, France",
+            "latitude": "48.8566",
+            "longitude": "2.3522"
+        },
+        "distance": 395.62
+    },
+    "104": {
+        "pred": {
+            "city": "Liverpool, England, UK",
+            "latitude": "53.402",
+            "longitude": "-2.977"
+        },
+        "distance": 49.58
+    },
+    "105": {
+        "pred": {
+            "city": "Edmonton, Alberta, Canada",
+            "latitude": "53.5461",
+            "longitude": "-113.4938"
+        },
+        "distance": 3.78
+    },
+    "106": {
+        "pred": {
+            "city": "Zaragoza, Spain",
+            "latitude": "41.648823",
+            "longitude": "-0.889085"
+        },
+        "distance": 7.57
+    },
+    "107": {
+        "pred": {
+            "city": "Zipf, Austria",
+            "latitude": "48.015",
+            "longitude": "13.515"
+        },
+        "distance": 61.66
+    },
+    "108": {
+        "pred": {
+            "city": "Bodrum, Mu\u011fla, Turkey",
+            "latitude": "37.113",
+            "longitude": "27.2989"
+        },
+        "distance": 4.62
+    },
+    "110": {
+        "pred": {
+            "city": "Unknown small town, Austria",
+            "latitude": "47.5162",
+            "longitude": "14.5501"
+        },
+        "distance": 151.15
+    },
+    "201": {
+        "pred": {
+            "city": "Portland, Oregon, USA",
+            "latitude": "45.5051",
+            "longitude": "-122.6750"
+        },
+        "distance": 4.02
+    },
+    "202": {
+        "pred": {
+            "city": "Breb, Maramure\u0219, Romania",
+            "latitude": "47.8",
+            "longitude": "23.9333"
+        },
+        "distance": 735.82
+    },
+    "203": {
+        "pred": {
+            "city": "Amarillo, Texas, United States",
+            "latitude": "35.221997",
+            "longitude": "-101.831297"
+        },
+        "distance": 15209.99
+    },
+    "204": {
+        "pred": {
+            "city": "Amsterdam, North Holland, Netherlands",
+            "latitude": "52.3676",
+            "longitude": "4.9041"
+        },
+        "distance": 119.21
+    },
+    "205": {
+        "pred": {
+            "city": "Orland Park, IL, USA",
+            "latitude": "42.0099",
+            "longitude": "-87.62317"
+        },
+        "distance": 1007.39
+    },
+    "206": {
+        "pred": {
+            "city": "Brazil",
+            "latitude": "-22.8975",
+            "longitude": "-43.1803"
+        },
+        "distance": 1331.03
+    },
+    "207": {
+        "pred": {
+            "city": "Big Spring, Texas, United States",
+            "latitude": "32.2504",
+            "longitude": "-101.4787"
+        },
+        "distance": 658.7
+    },
+    "208": {
+        "pred": {
+            "city": "Sahapur, West Bengal, India",
+            "latitude": "24.8722",
+            "longitude": "88.1323"
+        },
+        "distance": 215.89
+    },
+    "210": {
+        "pred": {
+            "city": "Delhi, Delhi, India",
+            "latitude": "28.704060",
+            "longitude": "77.102493"
+        },
+        "distance": 12.27
+    }
+}

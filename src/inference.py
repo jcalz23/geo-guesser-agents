@@ -9,6 +9,10 @@ import argparse
 from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional, List, Tuple
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.agents.single_agent import SingleAgentRunner

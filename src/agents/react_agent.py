@@ -90,7 +90,7 @@ class ReactAgentRunner:
         llm = ChatOpenAI(model=REACT_MODEL, temperature=REACT_TEMPERATURE)
         self.agent_executor = create_react_agent(llm, self.tools, messages_modifier=REACT_PROMPT)
         self.planner = PLANNER_PROMPT | llm.with_structured_output(Plan)
-        self.replanner = REPLANNER_PROMPT | llm.with_structured_output(Act)   
+        self.replanner = REPLANNER_PROMPT | llm.with_structured_output(Act)
 
     def plan_step(self, state: State):
         """Plan step for the React Agent"""
@@ -167,15 +167,19 @@ class ReactAgentRunner:
             "next_step": next_step
         })
 
-        # Determine if the output is a response or a plan
-        if isinstance(output.action, Response):
-            output = {"response": output.action.response, "num_steps_used": state["num_steps_used"] + 1}
-        elif isinstance(output.action, Plan):
-            output = {"plan": output.action.steps, "num_steps_used": state["num_steps_used"] + 1}
-            logging.info(f"**Step: {state['num_steps_used']}**")
-            logging.info(f"New Plan: {output['plan']}")
+        # Ensure the output is an Act object with either a Response or Plan
+        if isinstance(output, Act):
+            if isinstance(output.action, Response):
+                output = {"response": output.action.response, "num_steps_used": state["num_steps_used"] + 1}
+            elif isinstance(output.action, Plan):
+                output = {"plan": output.action.steps, "num_steps_used": state["num_steps_used"] + 1}
+                logging.info(f"**Step: {state['num_steps_used']}**")
+                logging.info(f"New Plan: {output['plan']}")
+            else:
+                logging.error(f"Unexpected action type in Act: {type(output.action)}")
+                output = {"response": "An error occurred during replanning."}
         else:
-            logging.error(f"Unexpected output from replanner: {output}")
+            logging.error(f"Unexpected output type from replanner: {type(output)}")
             output = {"response": "An error occurred during replanning."}
 
         return output

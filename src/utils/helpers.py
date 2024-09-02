@@ -16,12 +16,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-def compress_image(image_path, max_size=(800, 800), quality=85):
+def compress_image(img, max_size=(800, 800), quality=85):
     """
     Compresses image to reduce token count
 
     Parameters:
-        image_path (str): Path to image
+        img (PIL.Image): Image to compress
         max_size (tuple): Maximum size of image
         quality (int): Quality of image
 
@@ -29,16 +29,14 @@ def compress_image(image_path, max_size=(800, 800), quality=85):
         str: Compressed image
     """
     # Compress image to reduce token count
-    with Image.open(image_path) as img:
-        img.thumbnail(max_size)
-        if img.mode in ('RGBA', 'LA'):
-            background = Image.new(img.mode[:-1], img.size, (255, 255, 255))
-            background.paste(img, img.split()[-1])
-            img = background
-        buffer = BytesIO()
-        img.convert('RGB').save(buffer, format='JPEG', quality=quality, optimize=True)
-        compressed_img = buffer.getvalue()
-    return compressed_img
+    img.thumbnail(max_size)
+    if img.mode in ('RGBA', 'LA'):
+        background = Image.new(img.mode[:-1], img.size, (255, 255, 255))
+        background.paste(img, img.split()[-1])
+        img = background
+    buffer = BytesIO()
+    img.convert('RGB').save(buffer, format='JPEG', quality=quality, optimize=True)
+    return buffer.getvalue()
 
 def crop_image(img, crop_percentage=0.8):
     """
@@ -82,14 +80,15 @@ def prep_images(image_id_dir, max_size=(512, 512), quality=85, crop_percentage=0
                 cropped_img = crop_image(img, crop_percentage)
 
                 # Compress the cropped image
-                cropped_img.thumbnail(max_size)
-                if cropped_img.mode in ('RGBA', 'LA'):
-                    background = Image.new(cropped_img.mode[:-1], cropped_img.size, (255, 255, 255))
-                    background.paste(cropped_img, cropped_img.split()[-1])
-                    cropped_img = background
-                buffer = BytesIO()
-                cropped_img.convert('RGB').save(buffer, format='JPEG', quality=quality, optimize=True)
-                compressed_img = buffer.getvalue()
+                compressed_img = compress_image(cropped_img, max_size, quality)
+                # cropped_img.thumbnail(max_size)
+                # if cropped_img.mode in ('RGBA', 'LA'):
+                #     background = Image.new(cropped_img.mode[:-1], cropped_img.size, (255, 255, 255))
+                #     background.paste(cropped_img, cropped_img.split()[-1])
+                #     cropped_img = background
+                # buffer = BytesIO()
+                # cropped_img.convert('RGB').save(buffer, format='JPEG', quality=quality, optimize=True)
+                # compressed_img = buffer.getvalue()
 
             encoded_img = base64.b64encode(compressed_img).decode('utf-8')
             image_input = {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_img}"}}

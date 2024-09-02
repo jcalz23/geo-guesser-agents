@@ -12,7 +12,8 @@ from fastapi.requests import Request
 import asyncio
 from fastapi import HTTPException
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
 from src.inference import InferenceRunner, get_agent
 
 # Initialize logging
@@ -34,10 +35,10 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 # Define upload directory
-UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+UPLOAD_DIR = os.path.join(parent_dir, "app/uploads")
 
 # Initialize Jinja2 templates
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=os.path.join(parent_dir, "app/templates"))
 
 def reset_upload_dir():
     if os.path.exists(UPLOAD_DIR):

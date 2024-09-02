@@ -109,7 +109,7 @@ class MultiAgentSupervisorRunner:
         except Exception as e:
             logging.info(f"INPUT: \n{state['messages'][-1].content}")
         result = agent.invoke(state)
-        logging.info(f"\nOUTPUT: \n{result["output"]}")
+        logging.info(f"\nOUTPUT: \n{result['output']}")
         return {"messages": [HumanMessage(content=result["output"], name=name)]}
 
     def create_supervisor_chain(self):

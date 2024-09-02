@@ -1,0 +1,138 @@
+{
+    "101": {
+        "pred": {
+            "city": "Nakhon Ratchasima, Thailand",
+            "latitude": "15.870032",
+            "longitude": "100.992541"
+        },
+        "distance": 252.03
+    },
+    "102": {
+        "pred": {
+            "city": "Bengaluru, Karnataka, India",
+            "latitude": "12.9352",
+            "longitude": "77.6245"
+        },
+        "distance": 17.41
+    },
+    "103": {
+        "pred": {
+            "city": "Paris, \u00cele-de-France, France",
+            "latitude": "48.892",
+            "longitude": "2.362"
+        },
+        "distance": 398.67
+    },
+    "104": {
+        "pred": {
+            "city": "Birmingham, West Midlands, UK",
+            "latitude": "52.479699",
+            "longitude": "-1.897401"
+        },
+        "distance": 113.71
+    },
+    "105": {
+        "pred": {
+            "city": "San Diego, CA, USA",
+            "latitude": "32.8328",
+            "longitude": "-117.2713"
+        },
+        "distance": 2320.81
+    },
+    "106": {
+        "pred": {
+            "city": "Zaragoza, Aragon, Spain",
+            "latitude": "41.648823",
+            "longitude": "-0.889085"
+        },
+        "distance": 7.57
+    },
+    "107": {
+        "pred": {
+            "city": "Zipf, Upper Austria, Austria",
+            "latitude": "48.002",
+            "longitude": "13.49"
+        },
+        "distance": 63.96
+    },
+    "108": {
+        "pred": {
+            "city": "Marmaris, Mu\u011fla, Turkey",
+            "latitude": "36.6781",
+            "longitude": "28.0917"
+        },
+        "distance": 87.44
+    },
+    "109": {
+        "pred": {
+            "city": "Peru",
+            "latitude": "-9.189967",
+            "longitude": "-75.015152"
+        },
+        "distance": 4394.52
+    },
+    "201": {
+        "pred": {
+            "city": "Portland, Oregon, USA",
+            "latitude": "45.523064",
+            "longitude": "-122.676483"
+        },
+        "distance": 2.9
+    },
+    "204": {
+        "pred": {
+            "city": "Amsterdam, North Holland, Netherlands",
+            "latitude": "52.3676",
+            "longitude": "4.9041"
+        },
+        "distance": 119.21
+    },
+    "205": {
+        "pred": {
+            "city": "San Diego, CA, USA",
+            "latitude": "32.715736",
+            "longitude": "-117.161087"
+        },
+        "distance": 3687.39
+    },
+    "206": {
+        "pred": {
+            "city": "Manaus, Amazonas, Brazil",
+            "latitude": "-3.118663",
+            "longitude": "-60.021531"
+        },
+        "distance": 1983.74
+    },
+    "207": {
+        "pred": {
+            "city": "Baytown, Texas, USA",
+            "latitude": "29.7752",
+            "longitude": "-94.9774"
+        },
+        "distance": 25.97
+    },
+    "208": {
+        "pred": {
+            "city": "West Bengal, India",
+            "latitude": "22.9868",
+            "longitude": "87.855"
+        },
+        "distance": 137.96
+    },
+    "209": {
+        "pred": {
+            "city": "San Diego, California, USA",
+            "latitude": "32.715736",
+            "longitude": "-117.161087"
+        },
+        "distance": 3865.42
+    },
+    "210": {
+        "pred": {
+            "city": "Mumbai, Maharashtra, India",
+            "latitude": "19.0760",
+            "longitude": "72.8777"
+        },
+        "distance": 1153.19
+    }
+}
