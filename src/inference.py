@@ -1,6 +1,7 @@
 """
 This script allows users to select an agent and run inference on a test set.
 """
+import os
 import sys
 import json
 import logging
@@ -9,6 +10,7 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional, List, Tuple
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.agents.single_agent import SingleAgentRunner
 from src.agents.prescribed_chain import PrescribedChainAgent
 from src.agents.multi_agent_supervisor import MultiAgentSupervisorRunner
@@ -83,7 +85,7 @@ class InferenceRunner:
             return json.load(f)
 
     def inference(self, key: str, image_dir: List[str], target_dict: Dict[str, Any],
-                  output_dict: Dict[str, Any]) -> Tuple[str, float]:
+                  output_dict: Dict[str, Any], save_results: bool = True) -> Tuple[str, float]:
         """Run inference on a single image using the selected agent.
 
         Args:
@@ -102,9 +104,10 @@ class InferenceRunner:
         pred, distance = self.agent.process_location(image_list, target_dict)
 
         # Save results after each location
-        output_dict[key] = {"pred": pred, "distance": distance}
-        with open(self.results_file_path, 'w') as file:
-            json.dump(output_dict, file)
+        if save_results:
+            output_dict[key] = {"pred": pred, "distance": distance}
+            with open(self.results_file_path, 'w') as file:
+                json.dump(output_dict, file)
 
     def eval_single_image(self):
         """Run inference on a single image using the selected agent.
@@ -124,7 +127,7 @@ class InferenceRunner:
             target_dict = {"latitude": float(self.target_latitude), "longitude": float(self.target_longitude)}
         
         # Run inference
-        self.inference(key, self.image_dir, target_dict, output_dict={})
+        self.inference(key, self.image_dir, target_dict, output_dict={}, save_results=False)
         return "Evaluation completed"
 
     def eval_test_set(self):

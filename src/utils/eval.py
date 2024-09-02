@@ -1,5 +1,9 @@
+import os
+import json
 import math
 import sys
+import pandas as pd
+
 sys.path.append('../')
 from src.constants import MAX_SCORE, MAX_D
 
@@ -59,5 +63,55 @@ def geoguessr_score(distance_km):
     except:
         print()
         print(distance_km)
+
+def get_latest_run_filenames(agent_list, results_dir):
+    result_filenames = {}
+    for agent in agent_list:
+        runs = [x for x in os.listdir(results_dir) if x.startswith(agent)]
+        latest_run = sorted(runs, key=lambda x: os.path.getmtime(os.path.join(results_dir, x)))[-1]
+        result_filenames[agent] = latest_run
+    return result_filenames
+
+def load_results(results_dir, result_filenames):
+    df = pd.DataFrame()
+    for agent, result_filename in result_filenames.items():
+        with open(f"{results_dir}/{result_filename}", "r") as file:
+            results = json.load(file)
+        new_row = pd.DataFrame({k: v["distance"] for k, v in results.items()}, index=[agent])
+        df = new_row if len(df) == 0 else pd.concat([df, new_row])
+    return df
+
+def calculate_metrics(df):
+    t1_cols = [col for col in df.columns if col[0] == "1"]
+    t2_cols = [col for col in df.columns if col[0] == "2"]
+    df["mean"] = df[t1_cols + t2_cols].mean(axis=1)
+    df["mean_t1"] = df[t1_cols].mean(axis=1)
+    df["mean_t2"] = df[t2_cols].mean(axis=1)
+    df["min"] = df[t1_cols + t2_cols].min(axis=1)
+    return df[sorted(df.columns)]
+
+def calculate_scores(df):
+    df["total_score"] = df["total_score_t1"] = df["total_score_t2"] = 0
+    for index, row in df.iterrows():
+        for col in df.columns:
+            if col[0] in ["1", "2"]:
+                score = geoguessr_score(df.at[index, col])
+                df.at[index, "total_score"] += score
+                if int(col) <= 110:
+                    df.at[index, "total_score_t1"] += score
+                elif int(col) > 110:
+                    df.at[index, "total_score_t2"] += score
+    return df
+
+def calculate_normalized_scores(df):
+    score_columns = ['total_score', 'total_score_t1', 'total_score_t2']
+    for index, row in df.iterrows():
+        non_na_t1 = df.loc[index, '101':'110'].count()
+        non_na_t2 = df.loc[index, '201':'210'].count()
+        
+        df.at[index, 'normalized_total_score_t1'] = df.at[index, 'total_score_t1'] / non_na_t1 if non_na_t1 > 0 else 0
+        df.at[index, 'normalized_total_score_t2'] = df.at[index, 'total_score_t2'] / non_na_t2 if non_na_t2 > 0 else 0
+        df.at[index, 'normalized_total_score'] = df.at[index, 'total_score'] / (non_na_t1 + non_na_t2) if (non_na_t1 + non_na_t2) > 0 else 0
+    return df
     
 

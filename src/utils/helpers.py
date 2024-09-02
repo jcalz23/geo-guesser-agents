@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import base64
+import logging
 import requests
 from PIL import Image
 from io import BytesIO
@@ -9,6 +10,10 @@ from langchain_core.tools import Tool
 from langchain_google_community import GoogleSearchAPIWrapper
 sys.path.append('../')
 from src.constants import *
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def compress_image(image_path, max_size=(800, 800), quality=85):
@@ -35,12 +40,35 @@ def compress_image(image_path, max_size=(800, 800), quality=85):
         compressed_img = buffer.getvalue()
     return compressed_img
 
-def prep_images(image_id_dir, max_size=(512, 512), quality=85):
+def crop_image(img, crop_percentage=0.8):
     """
-    Loads images, compresses them, and prepares them for OpenAI API call
+    Crops an image to the specified percentage, keeping the center portion.
+
+    Parameters:
+        img (PIL.Image): Image to crop
+        crop_percentage (float): Percentage of original image to keep (0.8 = 80%)
+
+    Returns:
+        PIL.Image: Cropped image
+    """
+    width, height = img.size
+    crop_width = int(width * crop_percentage)
+    crop_height = int(height * crop_percentage)
+    left = (width - crop_width) // 2
+    top = (height - crop_height) // 2
+    right = left + crop_width
+    bottom = top + crop_height
+    return img.crop((left, top, right, bottom))
+
+def prep_images(image_id_dir, max_size=(512, 512), quality=85, crop_percentage=0.8):
+    """
+    Loads images, crops them, compresses them, and prepares them for OpenAI API call
 
     Parameters:
         image_id_dir (str): Directory of images
+        max_size (tuple): Maximum size of image after compression
+        quality (int): Quality of compressed image
+        crop_percentage (float): Percentage of original image to keep (0.8 = 80%)
 
     Returns:
         list: List of image inputs
@@ -49,7 +77,20 @@ def prep_images(image_id_dir, max_size=(512, 512), quality=85):
     for image_file in os.listdir(image_id_dir):
         if image_file.lower().endswith(('.png', '.jpg', '.jpeg')):
             image_path = os.path.join(image_id_dir, image_file)
-            compressed_img = compress_image(image_path, max_size=max_size, quality=quality)
+            with Image.open(image_path) as img:
+                # Crop the image
+                cropped_img = crop_image(img, crop_percentage)
+
+                # Compress the cropped image
+                cropped_img.thumbnail(max_size)
+                if cropped_img.mode in ('RGBA', 'LA'):
+                    background = Image.new(cropped_img.mode[:-1], cropped_img.size, (255, 255, 255))
+                    background.paste(cropped_img, cropped_img.split()[-1])
+                    cropped_img = background
+                buffer = BytesIO()
+                cropped_img.convert('RGB').save(buffer, format='JPEG', quality=quality, optimize=True)
+                compressed_img = buffer.getvalue()
+
             encoded_img = base64.b64encode(compressed_img).decode('utf-8')
             image_input = {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_img}"}}
             image_inputs.append(image_input)
@@ -91,8 +132,11 @@ def call_openai(model, sys_message, text_prompt, prompt_inputs, image_inputs=Non
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     result = response.json()['choices'][0]['message']['content']
-
-    return json.loads(result)
+    try:
+        return json.loads(result)
+    except Exception as e:
+        logger.info(f"Error parsing JSON: {e}", exc_info=True)
+        return result
 
 def top_n_results(query):
     """

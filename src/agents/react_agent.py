@@ -117,14 +117,16 @@ class ReactAgentRunner:
 
         # Log the most recent tool call
         messages = agent_response.get("messages", [])
+        log_task = True
         for message in reversed(messages):
             if hasattr(message, 'additional_kwargs') and 'tool_calls' in message.additional_kwargs:
                 tool_calls = message.additional_kwargs['tool_calls']
                 if tool_calls:
                     most_recent_tool_call = tool_calls[-1]
-                    logging.info(f"Most recent tool call:")
+                    logging.info(f"**Step {state['num_steps_used']}**")
                     logging.info(f"Tool: {most_recent_tool_call['function']['name']}")
                     logging.info(f"Arguments: {most_recent_tool_call['function']['arguments']}")
+                    log_task = False
                     break
 
         # Return the updated steps for next iteration
@@ -136,25 +138,45 @@ class ReactAgentRunner:
             "step": task,
             "result": agent_response["messages"][-1].content
         }
-        logging.info(f"Last step result: {recent_step_result}")
+        if log_task:
+            logging.info(f"**Step {state['num_steps_used']}**")
+            logging.info(f"Task: {task}")
+        logging.info(f"Result: {agent_response['messages'][-1].content}")
         step_result["past_steps_results"] = state["past_steps_results"] + [recent_step_result]
         return step_result
 
     def replan_step(self, state: State):
         """Replan step for the React Agent"""
+        # Define prompt inputs (depending on recursion limit)
+        if state["num_steps_used"] == REACT_RECURSION_LIMIT - 2: # for extra caution
+            instruction = ""
+            remaining_steps = 0
+            next_step = REPLANNER_RETURN
+        else:
+            instruction = REPLANNER_INSTRUCTION
+            remaining_steps = REACT_RECURSION_LIMIT - state["num_steps_used"] - 1
+            next_step = REPLANNER_UPDATE
+
         # Replan
         output = self.replanner.invoke({
+            "instruction": instruction,
             "input": state["input"],
             "plan": state["plan"],
             "past_steps_results": state["past_steps_results"],
-            "remaining_steps": REACT_RECURSION_LIMIT - state["num_steps_used"] - 1
+            "remaining_steps": remaining_steps,
+            "next_step": next_step
         })
 
         # Determine if the output is a response or a plan
         if isinstance(output.action, Response):
-            output = {"response": output.action.response}
-        else:
+            output = {"response": output.action.response, "num_steps_used": state["num_steps_used"] + 1}
+        elif isinstance(output.action, Plan):
             output = {"plan": output.action.steps, "num_steps_used": state["num_steps_used"] + 1}
+            logging.info(f"**Step: {state['num_steps_used']}**")
+            logging.info(f"New Plan: {output['plan']}")
+        else:
+            logging.error(f"Unexpected output from replanner: {output}")
+            output = {"response": "An error occurred during replanning."}
 
         return output
 
@@ -201,16 +223,13 @@ class ReactAgentRunner:
         text_prompt = INITIAL_PROMPT_TEMPLATE.format(
             json_prompt=JSON_PROMPT, recursion_limit=REACT_RECURSION_LIMIT
         )
+        logging.info(f"Initial prompt: {text_prompt}")
         inputs = {"input": text_prompt, "images": image_list, "num_steps_used": 0, "past_steps_results": []}
 
         # Run app with streaming
         for event in self.graph.stream(inputs, config={"recursion_limit": REACT_RECURSION_LIMIT}):
             for k, v in event.items():
                 if k != "__end__":
-                    if 'data:image/jpeg;base64' in str(v):
-                        logging.info("Sent image to LLM for analysis")
-                    else:
-                        logging.info(v)
                     logging.info("----------------------------------")
                     logging.info("----------------------------------")
 

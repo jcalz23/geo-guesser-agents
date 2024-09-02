@@ -198,7 +198,7 @@ class MultiAgentSupervisorRunner:
         inputs = {"messages": [HumanMessage(content=text_input + image_list)]}
 
         # Run the graph and log outputs
-        for output in self.graph.stream(inputs):
+        for output in self.graph.stream(inputs, config={"recursion_limit": MULTI_AGENT_RECURSION_LIMIT}):
             if "FINISH" not in str(output):
                 prev_output = output
                 if isinstance(output, dict) and "supervisor" in output:

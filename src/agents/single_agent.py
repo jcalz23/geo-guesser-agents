@@ -18,7 +18,7 @@ from langchain_google_community import GooglePlacesTool
 from langchain_core.messages import HumanMessage
 from langchain.tools import StructuredTool
 
-sys.path.append('../')
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from src.utils.helpers import call_openai, get_street_view_image
 from src.utils.eval import calculate_distance
 from src.constants import *
@@ -123,7 +123,7 @@ class SingleAgentRunner:
         logging.info("Graph execution stream:")
 
         # Iterate through each step of the graph execution
-        for step, output in enumerate(self.app.stream(inputs), start=1):
+        for step, output in enumerate(self.app.stream(inputs, config={"recursion_limit": SINGLE_AGENT_RECURSION_LIMIT}), start=1):
             for node, content in output.items():
                 # Log the step number and node name
                 if 'data:image/jpeg;base64' in str(content):

@@ -46,14 +46,18 @@ def reset_upload_dir():
 
 @app.get("/")
 async def root(request: Request):
+    """Root endpoint for the app"""
     return templates.TemplateResponse("index.html", {"request": request})
+
 @app.post("/upload")
 async def upload_images(files: List[UploadFile] = File(...)):
+    """Upload images to the app"""
     logger.info("-----UPLOAD-----")
     # Reset the upload directory before new uploads
     reset_upload_dir()
     logger.info(f"Upload directory reset: {UPLOAD_DIR}")
     
+    # Upload files
     filenames = []
     for file in files:
         file_path = os.path.join(UPLOAD_DIR, file.filename)
@@ -66,17 +70,19 @@ async def upload_images(files: List[UploadFile] = File(...)):
 
 @app.post("/predict")
 async def predict(agent_name: str = Form(...)):
+    """Predict the location of the images"""
     try:
         selected_agent = get_agent(agent_name)
         runner = InferenceRunner(selected_agent, agent_name, None, UPLOAD_DIR, None, None)
         result = runner.main()
         return Response(status_code=204)
     except Exception as e:
-        logger.error(f"Error during prediction: {str(e)}")
+        logger.error(f"Error during prediction: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/stream_logs")
 async def stream_logs():
+    """Stream the logs from the app"""
     async def log_generator():
         with open('app.log', 'r') as log_file:
             # Move to the end of the file
@@ -92,6 +98,7 @@ async def stream_logs():
 
 @app.post("/clear_logs")
 async def clear_logs():
+    """Clear the logs from the app"""
     with open('app.log', 'w'):
         pass  # This will clear the contents of the log file
     logger.info("Logs cleared")
